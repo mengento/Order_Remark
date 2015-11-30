@@ -12,6 +12,9 @@ class Add extends \Mengento\OrderRemark\Controller\Adminhtml\Order
         try {
 
         $data = $this->getRequest()->getPost('remark');
+        if (empty($data['comment']) && $data['status'] == $order->getDataByKey('status')) {
+                throw new \Magento\Framework\Exception\LocalizedException(__('Please enter a comment.'));
+        }
         $comment = array(
                 'increment_id'=>$order->getIncrementId(),
                 'entity_id'=>$order->getId(),
@@ -26,7 +29,7 @@ class Add extends \Mengento\OrderRemark\Controller\Adminhtml\Order
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $response = ['error' => true, 'message' => $e->getMessage()];
         } catch (\Exception $e) {
-                $response = ['error' => true, 'message' => __('We cannot add order history.')];
+                $response = ['error' => true, 'message' => __('We cannot add order remark.')];
         }
             if (is_array($response)) {
                 $resultJson = $this->resultJsonFactory->create();
